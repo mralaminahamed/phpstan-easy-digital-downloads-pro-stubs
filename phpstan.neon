@@ -1,12 +1,12 @@
 parameters:
     paths:
-        - easy-digital-downloads-pro-stubs.php
-        - edd-software-licensing-stubs.php
-        - edd-recurring-stubs.php
+        - easy-digital-downloads-pro-stubs.stub
+        - edd-software-licensing-stubs.stub
+        - edd-recurring-stubs.stub
     scanFiles:
-        - easy-digital-downloads-pro-constants-stubs.php
-        - edd-software-licensing-constants-stubs.php
-        - edd-recurring-constants-stubs.php
+        - easy-digital-downloads-pro-constants-stubs.stub
+        - edd-software-licensing-constants-stubs.stub
+        - edd-recurring-constants-stubs.stub
     bootstrapFiles:
         - configs/bootstrap.php
     level: 5

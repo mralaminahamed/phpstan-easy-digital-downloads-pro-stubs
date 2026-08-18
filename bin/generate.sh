@@ -12,12 +12,12 @@ HEADER_SL=$'/**\n * Generated stub declarations for EDD Software Licensing.\n * 
 
 HEADER_RECURRING=$'/**\n * Generated stub declarations for EDD Recurring Payments.\n * @see https://easydigitaldownloads.com/downloads/recurring-payments/\n * @see https://github.com/mralaminahamed/phpstan-easy-digital-downloads-pro-stubs\n */'
 
-FILE_PRO="$ROOT_DIR/easy-digital-downloads-pro-stubs.php"
-FILE_PRO_CONSTANTS="$ROOT_DIR/easy-digital-downloads-pro-constants-stubs.php"
-FILE_SL="$ROOT_DIR/edd-software-licensing-stubs.php"
-FILE_SL_CONSTANTS="$ROOT_DIR/edd-software-licensing-constants-stubs.php"
-FILE_RECURRING="$ROOT_DIR/edd-recurring-stubs.php"
-FILE_RECURRING_CONSTANTS="$ROOT_DIR/edd-recurring-constants-stubs.php"
+FILE_PRO="$ROOT_DIR/easy-digital-downloads-pro-stubs.stub"
+FILE_PRO_CONSTANTS="$ROOT_DIR/easy-digital-downloads-pro-constants-stubs.stub"
+FILE_SL="$ROOT_DIR/edd-software-licensing-stubs.stub"
+FILE_SL_CONSTANTS="$ROOT_DIR/edd-software-licensing-constants-stubs.stub"
+FILE_RECURRING="$ROOT_DIR/edd-recurring-stubs.stub"
+FILE_RECURRING_CONSTANTS="$ROOT_DIR/edd-recurring-constants-stubs.stub"
 GENERATOR_BIN="$ROOT_DIR/vendor/bin/generate-stubs"
 
 set -e

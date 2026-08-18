@@ -42,29 +42,29 @@ composer require --dev mralaminahamed/easy-digital-downloads-pro-stubs
 parameters:
     scanFiles:
         # EDD free (required by this package)
-        - vendor/mralaminahamed/easy-digital-downloads-stubs/easy-digital-downloads-stubs.php
-        - vendor/mralaminahamed/easy-digital-downloads-stubs/easy-digital-downloads-constants-stubs.php
+        - vendor/mralaminahamed/easy-digital-downloads-stubs/easy-digital-downloads-stubs.stub
+        - vendor/mralaminahamed/easy-digital-downloads-stubs/easy-digital-downloads-constants-stubs.stub
         # EDD Pro
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/easy-digital-downloads-pro-stubs.php
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/easy-digital-downloads-pro-constants-stubs.php
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/easy-digital-downloads-pro-stubs.stub
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/easy-digital-downloads-pro-constants-stubs.stub
         # Software Licensing (include only if you use this addon)
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-software-licensing-stubs.php
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-software-licensing-constants-stubs.php
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-software-licensing-stubs.stub
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-software-licensing-constants-stubs.stub
         # Recurring Payments (include only if you use this addon)
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-recurring-stubs.php
-        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-recurring-constants-stubs.php
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-recurring-stubs.stub
+        - vendor/mralaminahamed/easy-digital-downloads-pro-stubs/edd-recurring-constants-stubs.stub
 ```
 
 ## Stub Files
 
 | File | Contents |
 |------|----------|
-| `easy-digital-downloads-pro-stubs.php` | EDD Pro classes, functions, interfaces, traits |
-| `easy-digital-downloads-pro-constants-stubs.php` | EDD Pro constants |
-| `edd-software-licensing-stubs.php` | Software Licensing classes and functions |
-| `edd-software-licensing-constants-stubs.php` | Software Licensing constants |
-| `edd-recurring-stubs.php` | Recurring Payments classes and functions |
-| `edd-recurring-constants-stubs.php` | Recurring Payments constants |
+| `easy-digital-downloads-pro-stubs.stub` | EDD Pro classes, functions, interfaces, traits |
+| `easy-digital-downloads-pro-constants-stubs.stub` | EDD Pro constants |
+| `edd-software-licensing-stubs.stub` | Software Licensing classes and functions |
+| `edd-software-licensing-constants-stubs.stub` | Software Licensing constants |
+| `edd-recurring-stubs.stub` | Recurring Payments classes and functions |
+| `edd-recurring-constants-stubs.stub` | Recurring Payments constants |
 
 ## Regenerating Stubs
 
