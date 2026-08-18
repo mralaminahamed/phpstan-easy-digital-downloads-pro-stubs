@@ -118,6 +118,7 @@ namespace {
         {
         }
     }
+    // @codeCoverageIgnore
     /**
      * EDD_SL_License_Export Class.
      *
@@ -160,16 +161,6 @@ namespace {
         {
         }
         /**
-         * Set the export headers
-         *
-         * @access public
-         * @since 3.0
-         * @return void
-         */
-        public function headers()
-        {
-        }
-        /**
          * Set the CSV columns
          *
          * @access      public
@@ -209,6 +200,16 @@ namespace {
          * @since 3.6
          */
         public function set_properties($request)
+        {
+        }
+        /**
+         * Get the license expiration date.
+         *
+         * @since 3.9.3
+         * @param \EDD\SoftwareLicensing\Licenses\License $license The license object.
+         * @return string The license expiration date.
+         */
+        private function get_license_expiration($license)
         {
         }
     }
@@ -1719,8 +1720,7 @@ namespace {
         /**
          * Lowercases site URL's, strips HTTP protocols and strips www subdomains.
          *
-         * @param string $url
-         *
+         * @param string $url The URL to clean.
          * @return string
          */
         public function clean_site_url($url)
@@ -3042,6 +3042,113 @@ namespace EDD\SoftwareLicensing\Admin\Exports {
         }
     }
 }
+namespace EDD\SoftwareLicensing\Admin {
+    /**
+     * License Logs List Table Class.
+     *
+     * Displays all license logs including activations, deactivations, key generation, and status changes.
+     *
+     * @since 3.9.5
+     */
+    class LicenseLogsListTable extends \EDD_Base_Log_List_Table
+    {
+        /**
+         * Log type.
+         *
+         * @since 3.9.5
+         * @var string
+         */
+        protected $log_type = 'license_logs';
+        /**
+         * Gets the name of the primary column.
+         *
+         * @since 3.9.5
+         * @return string Name of the primary column.
+         */
+        protected function get_primary_column_name()
+        {
+        }
+        /**
+         * Set the table columns.
+         *
+         * @since 3.9.5
+         * @return array Array of all the list table columns.
+         */
+        public function get_columns()
+        {
+        }
+        /**
+         * Gets the license column.
+         *
+         * @since 3.9.5
+         * @param array $item The log data.
+         * @return string
+         */
+        protected function column_license($item)
+        {
+        }
+        /**
+         * Gets the subject/event column.
+         *
+         * @since 3.9.5
+         * @param array $item The log data.
+         * @return string
+         */
+        protected function column_subject($item)
+        {
+        }
+        /**
+         * Gets the content/details column.
+         *
+         * @since 3.9.5
+         * @param array $item The log data.
+         * @return string
+         */
+        protected function column_content($item)
+        {
+        }
+        /**
+         * Gets the date column.
+         *
+         * @since 3.9.5
+         * @param array $item The log data.
+         * @return string
+         */
+        protected function column_date_created($item)
+        {
+        }
+        /**
+         * Return array of query arguments for license logs.
+         *
+         * @since 3.9.5
+         * @param bool $paginate Whether to add pagination arguments.
+         * @return array
+         */
+        protected function get_query_args($paginate = true)
+        {
+        }
+        /**
+         * Gets the log entries for the current view.
+         *
+         * @since 3.9.5
+         * @param array $log_query Arguments for getting logs.
+         * @return array Array of all the logs.
+         */
+        public function get_logs($log_query = array())
+        {
+        }
+        /**
+         * Get the total number of log items.
+         *
+         * @since 3.9.5
+         * @param array $log_query Arguments for getting logs.
+         * @return int
+         */
+        public function get_total($log_query = array())
+        {
+        }
+    }
+}
 namespace EDD\SoftwareLicensing\Deprecated {
     // @codeCoverageIgnore
     /**
@@ -3429,8 +3536,8 @@ namespace EDD\SoftwareLicensing\Admin {
          * Build the args array for search and count comment_form_default_fields*
          *
          * @since 3.5
-         * @param array $args The existing args
-         * @return array $args The updated args
+         * @param array $args The existing args.
+         * @return array $args The updated args.
          */
         private function build_search_args($args)
         {
@@ -3460,6 +3567,56 @@ namespace EDD\SoftwareLicensing\Admin {
          * @return string
          */
         private function get_view()
+        {
+        }
+    }
+    /**
+     * Logs class.
+     *
+     * Handles Software Licensing log type registration and rendering.
+     *
+     * @since 3.9.5
+     */
+    class Logs implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Get the subscribed events.
+         *
+         * @since 3.9.5
+         * @return array
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Registers license logs view in the logs dropdown.
+         *
+         * @since 3.9.5
+         *
+         * @param array $views Array of log views.
+         * @return array Modified array of views.
+         */
+        public function register_log_views($views)
+        {
+        }
+        /**
+         * Registers Software Licensing log types with the EDD log registry.
+         *
+         * @since 3.9.5
+         *
+         * @param array $log_types Array of registered log types.
+         * @return array Modified array of log types.
+         */
+        public function register_log_types($log_types)
+        {
+        }
+        /**
+         * Renders the license logs view.
+         *
+         * @since 3.9.5
+         * @return void
+         */
+        public function render_license_logs()
         {
         }
     }
@@ -4579,6 +4736,7 @@ namespace EDD\SoftwareLicensing\Admin\Reports {
      */
     class Loader implements \EDD\EventManagement\SubscriberInterface
     {
+        use \EDD\SoftwareLicensing\Admin\Traits\ProductSelect;
         /**
          * Get the subscribed events.
          *
@@ -4607,6 +4765,27 @@ namespace EDD\SoftwareLicensing\Admin\Reports {
          * @return void
          */
         public function register_reports($reports)
+        {
+        }
+        /**
+         * Register the licenses exporter.
+         *
+         * @since 3.9.3
+         * @param \EDD\Admin\Exports\Registry $registry The registry.
+         * @return void
+         */
+        public function register_exporters(\EDD\Admin\Exports\Registry $registry)
+        {
+        }
+        /**
+         * Render the licenses export form.
+         *
+         * @since 3.9.3
+         * @param string $exporter_id The exporter ID.
+         * @param array  $exporter    The exporter.
+         * @return void
+         */
+        public function render_export_form($exporter_id, $exporter)
         {
         }
     }
@@ -4785,6 +4964,69 @@ namespace EDD\SoftwareLicensing\Assets {
          * @return bool
          */
         private static function should_load_styles()
+        {
+        }
+    }
+}
+namespace EDD\SoftwareLicensing\Cart {
+    /**
+     * Preview class
+     *
+     * Adds Software Licensing data to cart preview items.
+     *
+     * @since 3.9.3
+     */
+    class Preview implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Get subscribed events.
+         *
+         * @since 3.9.3
+         * @return array Subscribed events.
+         */
+        public static function get_subscribed_events()
+        {
+        }
+        /**
+         * Enqueue the preview script.
+         *
+         * @since 3.9.3
+         * @return void
+         */
+        public function enqueue()
+        {
+        }
+        /**
+         * Add subscription information to cart item data.
+         *
+         * @since 3.9.3
+         * @param array $item_data   Formatted item data.
+         * @param int   $download_id Download ID.
+         * @param int   $key         Cart item key.
+         * @param array $item        Original cart item data.
+         * @return array Modified item data.
+         */
+        public function add_license_info($item_data, $download_id, $key, $item)
+        {
+        }
+        /**
+         * Get the license info.
+         *
+         * @param array $item The cart item.
+         * @since 3.9.3
+         * @return string|null The license info.
+         */
+        private function get_license_info($item): ?string
+        {
+        }
+        /**
+         * Get the upgrade args.
+         *
+         * @param array $item The cart item.
+         * @since 3.9.0
+         * @return array
+         */
+        private function get_upgrade_args($item): array
         {
         }
     }
@@ -5152,6 +5394,37 @@ namespace EDD\SoftwareLicensing\Cron {
          * @return array
          */
         private function get_registered_components()
+        {
+        }
+    }
+}
+namespace EDD\SoftwareLicensing\Customers {
+    /**
+     * Sync class.
+     *
+     * @since 3.9.6
+     */
+    class Sync implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Get the subscribed events.
+         *
+         * @since 3.9.6
+         * @return array
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Update license user IDs when a customer's linked WordPress user changes.
+         *
+         * @since 3.9.6
+         *
+         * @param int           $customer_id Customer ID.
+         * @param array         $data        Data used to update the customer.
+         * @param \EDD_Customer $item_raw Customer object before the update.
+         */
+        public function sync_license_user_id($customer_id, $data, $item_raw)
         {
         }
     }
@@ -5558,7 +5831,7 @@ namespace EDD\SoftwareLicensing\Database\Schemas {
          * @since 3.9.0
          * @var array
          */
-        public $columns = array(array('name' => 'id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'extra' => 'auto_increment', 'primary' => true, 'sortable' => true), array('name' => 'license_key', 'type' => 'varchar', 'length' => 255, 'unsigned' => true, 'sortable' => true, 'default' => null), array('name' => 'status', 'type' => 'varchar', 'length' => 20, 'default' => 'inactive', 'sortable' => true, 'searchable' => true, 'allow_null' => false), array('name' => 'download_id', 'type' => 'bigint', 'length' => 20, 'searchable' => true, 'allow_null' => false), array('name' => 'price_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => true, 'default' => null), array('name' => 'payment_id', 'type' => 'bigint', 'length' => 20, 'default' => null), array('name' => 'cart_index', 'type' => 'bigint', 'length' => 20, 'default' => 0, 'allow_null' => false), array('name' => 'date_created', 'type' => 'datetime', 'default' => '', 'created' => true, 'date_query' => true, 'sortable' => true, 'allow_null' => false), array('name' => 'expiration', 'type' => 'bigint', 'length' => 32, 'default' => null), array('name' => 'parent', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'allow_null' => false, 'default' => 0), array('name' => 'customer_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => null), array('name' => 'user_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => null));
+        public $columns = array(array('name' => 'id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'extra' => 'auto_increment', 'primary' => true, 'sortable' => true), array('name' => 'license_key', 'type' => 'varchar', 'length' => 255, 'unsigned' => true, 'sortable' => true, 'default' => null, 'searchable' => true), array('name' => 'status', 'type' => 'varchar', 'length' => 20, 'default' => 'inactive', 'sortable' => true, 'searchable' => true, 'allow_null' => false), array('name' => 'download_id', 'type' => 'bigint', 'length' => 20, 'searchable' => true, 'allow_null' => false), array('name' => 'price_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => true, 'default' => null), array('name' => 'payment_id', 'type' => 'bigint', 'length' => 20, 'default' => null), array('name' => 'cart_index', 'type' => 'bigint', 'length' => 20, 'default' => 0, 'allow_null' => false), array('name' => 'date_created', 'type' => 'datetime', 'default' => '', 'created' => true, 'date_query' => true, 'sortable' => true, 'allow_null' => false), array('name' => 'expiration', 'type' => 'bigint', 'length' => 32, 'default' => null), array('name' => 'parent', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'allow_null' => false, 'default' => 0), array('name' => 'customer_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => null), array('name' => 'user_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => null));
     }
     /**
      * Class LogsLicenses
@@ -5578,7 +5851,7 @@ namespace EDD\SoftwareLicensing\Database\Schemas {
             // id.
             array('name' => 'id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'extra' => 'auto_increment', 'primary' => true, 'sortable' => true),
             // license_id.
-            array('name' => 'license_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'sortable' => true, 'allow_null' => false),
+            array('name' => 'license_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'sortable' => true, 'in' => true, 'allow_null' => false),
             // subject.
             array('name' => 'subject', 'type' => 'varchar', 'length' => 200, 'default' => '', 'sortable' => true, 'searchable' => true, 'allow_null' => false),
             // content.
@@ -5800,14 +6073,14 @@ namespace EDD\SoftwareLicensing\Database\Tables {
          * @since 3.9.0
          * @var int
          */
-        protected $version = 202409241;
+        protected $version = 202604010;
         /**
          * Array of upgrade versions and methods
          *
          * @since 3.9.0
          * @var array
          */
-        protected $upgrades = array('202409241' => 202409241);
+        protected $upgrades = array('202409241' => 202409241, '202512180' => 202512180, '202604010' => 202604010);
         /**
          * Setup the database schema.
          *
@@ -5822,9 +6095,37 @@ namespace EDD\SoftwareLicensing\Database\Tables {
          * Upgrade routine for version 202409241.
          *
          * @since 3.9.0
-         * @return void
+         * @return bool
          */
         public function __202409241()
+        {
+        }
+        /**
+         * Upgrade routine for version 202512180.
+         *
+         * Fixes the parent column to properly enforce NOT NULL constraint.
+         * This addresses a discrepancy in 3.9.0 where the upgrade routine didn't
+         * add the NOT NULL constraint, allowing child licenses to have NULL parent values.
+         *
+         * @since 3.9.4
+         * @return bool
+         */
+        public function __202512180()
+        {
+        }
+        /**
+         * Upgrade routine for version 202604010.
+         *
+         * Adds composite indexes to support the admin license list table queries.
+         * The default view queries WHERE parent = 0 ORDER BY date_created DESC
+         * and status-filtered views query WHERE status = X ORDER BY date_created DESC.
+         * Without these indexes, MySQL performs a filesort on the entire result set
+         * which exceeds sort_buffer_size on large tables.
+         *
+         * @since 3.9.6
+         * @return bool
+         */
+        public function __202604010()
         {
         }
     }
@@ -5969,10 +6270,10 @@ namespace EDD\SoftwareLicensing\Downloads {
          * Return if a download is a lifetime license.
          *
          * @since 3.5
-         *
+         * @param int|null $price_id The price ID to check. Added in 3.9.3.
          * @return bool
          */
-        public function is_lifetime()
+        public function is_lifetime($price_id = null)
         {
         }
         /**
@@ -7758,9 +8059,9 @@ namespace EDD\SoftwareLicensing\Licenses {
          * The license ID.
          *
          * @since  3.5
-         * @var    integer
+         * @var    int
          */
-        public $id;
+        public $id = 0;
         protected $exists = false;
         protected $parent = 0;
         protected $post_parent = 0;
@@ -7790,6 +8091,14 @@ namespace EDD\SoftwareLicensing\Licenses {
          * @var null|EDD_SL_License[]
          */
         protected $child_licenses = null;
+        /**
+         * Lazy-init resolution flags — never persisted, never exposed externally.
+         *
+         * @since 3.9.6
+         */
+        private $_user_id_resolved = false;
+        private $_backfill_customer_ran = false;
+        private $_backfill_payment_ran = false;
         /**
          * EDD_SL_License constructor.
          *
@@ -7867,7 +8176,7 @@ namespace EDD\SoftwareLicensing\Licenses {
          * @since 3.5
          * @since 3.6 - Updated for custom tables, now that most data is not in meta tables.
          *
-         * @param array $data Key/Value array of property => value
+         * @param array $data Key/Value array of property => value.
          * @return bool If the row was updated
          */
         public function update($data = array())
@@ -9034,7 +9343,7 @@ namespace EDD\SoftwareLicensing\Requirements {
          * @var array[]
          * @since 3.8
          */
-        private $current_requirements = array('php' => array('minimum' => '7.4', 'name' => 'PHP', 'local' => true), 'wp' => array('minimum' => '6.2', 'name' => 'WordPress', 'local' => true), 'easy-digital-downloads' => array('minimum' => '3.3.6', 'name' => 'Easy Digital Downloads', 'local' => true));
+        private $current_requirements = array('php' => array('minimum' => '7.4', 'name' => 'PHP', 'local' => true), 'wp' => array('minimum' => '6.2', 'name' => 'WordPress', 'local' => true), 'easy-digital-downloads' => array('minimum' => '3.3.8', 'name' => 'Easy Digital Downloads', 'local' => true));
         /**
          * The requirements object.
          *
@@ -9236,6 +9545,35 @@ namespace EDD\SoftwareLicensing\Requirements {
         }
     }
 }
+namespace EDD\SoftwareLicensing\Telemetry {
+    /**
+     * LicenseCounts class.
+     *
+     * @since 3.9.6
+     */
+    class LicenseCounts implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Get the subscribed events.
+         *
+         * @since 3.9.6
+         * @return array
+         */
+        public static function get_subscribed_events()
+        {
+        }
+        /**
+         * Adds license counts by status to the telemetry products data.
+         *
+         * @since 3.9.6
+         * @param array $data The existing telemetry product data.
+         * @return array
+         */
+        public function add_license_counts($data)
+        {
+        }
+    }
+}
 namespace EDD\SoftwareLicensing\Upgrades {
     trait UpgradeNotification
     {
@@ -9387,12 +9725,41 @@ namespace EDD\SoftwareLicensing\Utils {
         {
         }
         /**
+         * Get the expiry duration for a failed request.
+         *
+         * @since 3.9.6
+         * @param mixed $response The response to check.
+         * @return int
+         */
+        private function get_expires($response): int
+        {
+        }
+        /**
          * Get the default patterns.
          *
          * @since 3.9.0
          * @return array
          */
         private function default_patterns(): array
+        {
+        }
+        /**
+         * Get the validated data.
+         *
+         * @since 3.9.4
+         * @param string $data The data to validate.
+         * @return array|null
+         */
+        private function get_validated_data($data): ?array
+        {
+        }
+        /**
+         * Get the license key. The pro license key is prioritized.
+         *
+         * @since 3.9.4
+         * @return string
+         */
+        private function get_license_key(): string
         {
         }
     }
@@ -9865,8 +10232,8 @@ namespace {
     /**
      * Renders the license key export box
      *
-     * @access      public
-     * @since       3.0
+     * @since 3.0
+     * @deprecated 3.9.3
      */
     function edd_sl_license_export_box()
     {
@@ -9875,6 +10242,7 @@ namespace {
      * Register the license keys batch exporter.
      *
      * @since 3.6
+     * @deprecated 3.9.3
      */
     function edd_sl_register_batch_export()
     {
@@ -9883,6 +10251,7 @@ namespace {
      * Loads the API requests batch process if needed
      *
      * @since  2.7
+     * @deprecated 3.9.3
      * @param  string $class The class being requested to run for the batch export
      * @return void
      */
@@ -10273,16 +10642,6 @@ namespace {
      * @license   GPL2+
      */
     /**
-     * Adds "Renewals" to the log views
-     *
-     * @access      public
-     * @since       2.2
-     * @return      void
-     */
-    function edd_sl_add_log_views($views)
-    {
-    }
-    /**
      * Registers Software Licensing reports with the EDD3.0+ registry.
      *
      * @param EDD\Reports\Data\Report_Registry $reports The report registry instance.
@@ -10359,6 +10718,22 @@ namespace {
     function edd_sl_license_upgrades_chart_callback()
     {
     }
+    /**
+     * Add License Renewal Notices to log views.
+     *
+     * @deprecated 3.9.5 License logs now handled by centralized log type registry.
+     * @param array $views Array of log views.
+     * @return array
+     */
+    function edd_sl_add_log_views($views)
+    {
+    }
+    /**
+     * Show renewal notices table.
+     *
+     * @deprecated 3.9.5 License logs now handled by centralized log type registry.
+     * @return void
+     */
     function edd_sl_show_renewal_notices_table()
     {
     }
@@ -11452,8 +11827,8 @@ namespace {
      *                     $download_id The new download ID (for the upgrade).
      *                     $price_id    The price ID for the upgrade.
      * }
-     * @return boolean|string
-     * @since 3.8
+     * @return bool|int|string The expiration date as a timestamp, 'lifetime', or false if no expiration date is found.
+     * @since 3.9.0
      */
     function edd_sl_get_product_expiration_date($download_id, $price_id = \false, $upgrade_args = array())
     {
@@ -11546,8 +11921,8 @@ namespace {
      *
      * @since 3.9.0
      *
-     * @param bool   $maybe_empty Whether the post content is empty.
-     * @param array  $post_data   Array of post data.
+     * @param bool  $maybe_empty Whether the post content is empty.
+     * @param array $post_data   Array of post data.
      *
      * @return bool
      */

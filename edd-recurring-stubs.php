@@ -3469,6 +3469,26 @@ namespace {
         {
         }
         /**
+         * Attempts to pay the first open invoice on a past_due subscription and
+         * voids any remaining stacked invoices.
+         *
+         * When a subscription is past_due, voiding the unpaid invoice causes Stripe
+         * to automatically reactivate the subscription without collecting payment.
+         * Instead, this method attempts to pay the invoice with the newly updated
+         * payment method. If payment fails, the invoices are left open so the
+         * subscription remains past_due.
+         *
+         * @link https://github.com/easydigitaldownloads/edd-recurring/issues/2188
+         *
+         * @since 2.13.9
+         *
+         * @param \Stripe\Collection $invoices    The collection of open invoices.
+         * @param EDD_Subscription   $subscription The EDD subscription object.
+         */
+        private function pay_and_void_past_due_invoices($invoices, $subscription)
+        {
+        }
+        /**
          * Cancels subscription in Stripe when marked as completed
          *
          * @access      public
@@ -3731,11 +3751,9 @@ namespace {
         }
     }
     /**
-     * Integrates EDD Recurring with the Content Restriction extension
+     * Content Restriction integration for EDD Recurring.
      *
-     * This allows content to be restricted to active subscribers only
-     *
-     * @since v1.0
+     * @since 1.0
      */
     class EDD_Recurring_Content_Restriction
     {
@@ -3745,7 +3763,7 @@ namespace {
          * @since  1.0
          * @return void
          */
-        function __construct()
+        public function __construct()
         {
         }
         /**
@@ -3758,24 +3776,12 @@ namespace {
         {
         }
         /**
-         * Attach our extra meta box field
+         * Show our metabox field in the Content Restriction metabox.
          *
          * @since  1.0
          * @return void
          */
         public function metabox($post_id)
-        {
-        }
-        /**
-         * For backwards compatibility only, this function remains, and is renamed to deprecated_metabox instead of just metabox.
-         * For the correct/current usage, see the metabox method in this EDD_Recurring_Content_Restriction class,
-         * and the edd_cr_restricted_table_before hook added in Content Restriction version 2.3
-         * Attach our extra meta box field
-         *
-         * @since  2.8
-         * @return void
-         */
-        public function deprecated_metabox($post_id, $restricted_to, $restricted_variable)
         {
         }
         /**
@@ -3788,7 +3794,7 @@ namespace {
         {
         }
         /**
-         * Check if user has access to content
+         * Check if user has access to content.
          *
          * @since  1.0
          * @return bool
@@ -3802,16 +3808,16 @@ namespace {
          * @since  2.2.7
          * @return bool
          */
-        public function can_access_content($return, $user_id, $restricted_to, $post_id)
+        public function can_access_content($can_access, $user_id, $restricted_to, $post_id)
         {
         }
         /**
          * Sets the active subscription restriction on the edd_restrict shortcode by default and allows overriding it
          *
          * @since  2.4
-         * @param  array $out   The attributes to return
-         * @param  array $pairs Attribute pairs
-         * @param  array $atts  Passed attributes
+         * @param  array $out   The attributes to return.
+         * @param  array $pairs Attribute pairs.
+         * @param  array $atts  Passed attributes.
          * @return array
          */
         public function restrict_shortcode_atts($out, $pairs, $atts)
@@ -3827,6 +3833,19 @@ namespace {
          * @return string                The new content
          */
         public function restrict_shortcode_content($content, $restricted_to, $atts)
+        {
+        }
+        /**
+         * For backwards compatibility only, this function remains, and is renamed to deprecated_metabox instead of just metabox.
+         * For the correct/current usage, see the metabox method in this EDD_Recurring_Content_Restriction class,
+         * and the edd_cr_restricted_table_before hook added in Content Restriction version 2.3
+         * Attach our extra meta box field
+         *
+         * @since  2.8
+         * @deprecated 2.13.11
+         * @return void
+         */
+        public function deprecated_metabox($post_id, $restricted_to, $restricted_variable)
         {
         }
     }
@@ -4797,6 +4816,25 @@ namespace EDD\Recurring\Admin\Reports {
          * @return void
          */
         public function remove_filter_products($report)
+        {
+        }
+        /**
+         * Replaces the product filter with a custom one.
+         *
+         * @since 2.13.10
+         * @param array $filters
+         * @return array
+         */
+        public function replace_product_filter($filters)
+        {
+        }
+        /**
+         * Outputs the product filter.
+         *
+         * @since 2.13.10
+         * @return void
+         */
+        public function product_filter()
         {
         }
         /**
@@ -6267,6 +6305,47 @@ namespace EDD\Recurring\Cart {
         }
     }
     /**
+     * Recurring_Hook class
+     *
+     * Adds Recurring subscription data to cart preview items.
+     *
+     * @since 2.13.8
+     */
+    class Preview implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Get subscribed events.
+         *
+         * @since 2.13.8
+         * @return array Subscribed events.
+         */
+        public static function get_subscribed_events()
+        {
+        }
+        /**
+         * Enqueue the preview script.
+         *
+         * @since 2.13.8
+         * @return void
+         */
+        public function enqueue()
+        {
+        }
+        /**
+         * Add subscription information to cart item data.
+         *
+         * @since 2.13.8
+         * @param array $item_data   Formatted item data.
+         * @param int   $download_id Download ID.
+         * @param int   $key         Cart item key.
+         * @param array $item        Original cart item data.
+         * @return array Modified item data.
+         */
+        public function add_subscription_info($item_data, $download_id, $key, $item)
+        {
+        }
+    }
+    /**
      * Subscription class.
      *
      * @since 2.11.9
@@ -6504,12 +6583,257 @@ namespace EDD\Recurring {
         }
     }
 }
+namespace EDD\Recurring\Cron\Components {
+    /**
+     * Abandoned Class
+     *
+     * @since 2.13.9
+     */
+    class Abandoned extends \EDD\Cron\Components\Component
+    {
+        /**
+         * The unique identifier for this component.
+         *
+         * @var string
+         */
+        protected static $id = 'recurring_abandoned';
+        /**
+         * Gets the array of subscribed events.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Added batch continuation hook.
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Deletes pending subscription records.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Processes subscriptions in batches via self-scheduling.
+         * @return void
+         */
+        public function check_for_abandoned_subscriptions()
+        {
+        }
+        /**
+         * Process a batch of abandoned subscriptions and schedule the next batch if needed.
+         *
+         * @since 2.13.11
+         * @return void
+         */
+        public function process_abandoned_batch()
+        {
+        }
+        /**
+         * Get the subscriptions DB.
+         *
+         * @since 2.13.9
+         * @return Database
+         */
+        private function get_db()
+        {
+        }
+        /**
+         * Get the batch size for the abandoned batch.
+         *
+         * @since 2.13.11
+         * @return int The batch size.
+         */
+        private function get_batch_size(): int
+        {
+        }
+    }
+    /**
+     * Cancellations Class
+     *
+     * @since 2.13.9
+     */
+    class Cancellations extends \EDD\Cron\Components\Component
+    {
+        /**
+         * The unique identifier for this component.
+         *
+         * @var string
+         */
+        protected static $id = 'recurring_cancellations';
+        /**
+         * Gets the array of subscribed events.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Added batch continuation hook.
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Cancel a subscription.
+         *
+         * @since 2.13.9
+         * @param int    $subscription_id The subscription ID.
+         * @param string $reason          The reason for the cancellation.
+         * @return void
+         */
+        public function cancel($subscription_id, $reason = '')
+        {
+        }
+        /**
+         * Check for any missed cancellation events and run the first batch.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Processes subscriptions in batches via self-scheduling.
+         * @return void
+         */
+        public function check_for_missed_cancellations()
+        {
+        }
+        /**
+         * Process a batch of missed cancellations and schedule the next batch if needed.
+         *
+         * @since 2.13.11
+         * @return void
+         */
+        public function process_cancellations_batch()
+        {
+        }
+        /**
+         * Get the batch size for the cancellations batch.
+         *
+         * @since 2.13.11
+         * @return int The batch size.
+         */
+        private function get_batch_size(): int
+        {
+        }
+    }
+    /**
+     * Expire Class
+     *
+     * @since 2.13.9
+     */
+    class Expire extends \EDD\Cron\Components\Component
+    {
+        /**
+         * The unique identifier for this component.
+         *
+         * @var string
+         */
+        protected static $id = 'recurring_expirations';
+        /**
+         * Gets the array of subscribed events.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Added batch continuation hook.
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Check for expired subscriptions once per day and kick off the first batch.
+         *
+         * @since 2.13.9
+         * @since 2.13.11 Processes subscriptions in batches via self-scheduling.
+         */
+        public function check_for_expired_subscriptions()
+        {
+        }
+        /**
+         * Process a batch of expired subscriptions and schedule the next batch if needed.
+         *
+         * @since 2.13.11
+         */
+        public function process_expire_batch()
+        {
+        }
+        /**
+         * Get the subscriptions DB.
+         *
+         * @since 2.13.9
+         * @return Database
+         */
+        private function get_db()
+        {
+        }
+        /**
+         * Get the batch size for the expiration batch.
+         *
+         * @since 2.13.11
+         * @return int The batch size.
+         */
+        private function get_batch_size(): int
+        {
+        }
+    }
+    /**
+     * Revenue Class
+     *
+     * @since 2.13.9
+     */
+    class Revenue extends \EDD\Cron\Components\Component
+    {
+        /**
+         * The unique identifier for this component.
+         *
+         * @var string
+         */
+        protected static $id = 'recurring_revenue';
+        /**
+         * Gets the array of subscribed events.
+         */
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Calculate recurring revenue in the background.
+         *
+         * @since 2.13.9
+         */
+        public function calculate_recurring_revenue()
+        {
+        }
+    }
+}
+namespace EDD\Recurring\Cron\Events {
+    /**
+     * Daily Events.
+     *
+     * @since 2.13.9
+     */
+    class Daily extends \EDD\Cron\Events\Event
+    {
+        /**
+         * Hook name.
+         *
+         * The hook that will fire when the Cron event is run.
+         *
+         * @var string
+         */
+        protected $hook = 'edd_recurring_daily_scheduled_events';
+        /**
+         * First Run Time.
+         *
+         * The UTC timestamp to run the event for the first time.
+         *
+         * @var int
+         */
+        protected $first_run = 0;
+        /**
+         * Schedule.
+         *
+         * The registered WP Cron schedule to use.
+         *
+         * @var string
+         */
+        protected $schedule = 'daily';
+    }
+}
 namespace EDD\Recurring\Cron {
     // @codeCoverageIgnore
     /**
      * The Recurring Reminders Class.
      *
-     * @since  2.4
+     * @since      2.4
+     * @deprecated 2.13.9 Use the new Cron\Loader and Component architecture instead.
      */
     class Handler implements \EDD\EventManagement\SubscriberInterface
     {
@@ -6520,7 +6844,8 @@ namespace EDD\Recurring\Cron {
         /**
          * Get the subscribers.
          *
-         * @since 2.13.0
+         * @since      2.13.0
+         * @deprecated 2.13.9 Cron events are now registered via Cron\Loader.
          * @return array
          */
         public static function get_subscribed_events()
@@ -6538,7 +6863,8 @@ namespace EDD\Recurring\Cron {
         /**
          * Set up our actions and properties.
          *
-         * @since  2.4
+         * @since      2.4
+         * @deprecated 2.13.9 Cron events are now registered via Cron\Loader and Components.
          */
         public function init()
         {
@@ -6546,7 +6872,8 @@ namespace EDD\Recurring\Cron {
         /**
          * Check for expired subscriptions once per day and mark them as expired.
          *
-         * @since  2.4
+         * @since      2.4
+         * @deprecated 2.13.9 Use Components\Expire instead.
          */
         public function check_for_expired_subscriptions()
         {
@@ -6554,7 +6881,8 @@ namespace EDD\Recurring\Cron {
         /**
          * Deletes pending subscription records.
          *
-         * @since 2.5
+         * @since      2.5
+         * @deprecated 2.13.9 Use Components\Abandoned instead.
          * @return void
          */
         public function check_for_abandoned_subscriptions()
@@ -6563,7 +6891,8 @@ namespace EDD\Recurring\Cron {
         /**
          * Cancel a subscription.
          *
-         * @since 2.13.0
+         * @since      2.13.0
+         * @deprecated 2.13.9 Use Components\Cancellations instead.
          * @param int    $subscription_id The subscription ID.
          * @param string $reason          The reason for the cancellation.
          * @return void
@@ -6574,39 +6903,85 @@ namespace EDD\Recurring\Cron {
         /**
          * Check for any missed cancellation events and run them.
          *
-         * @since 2.13.0
+         * @since      2.13.0
+         * @deprecated 2.13.9 Use Components\Cancellations instead.
          * @return void
          */
         public function check_for_missed_cancellations()
         {
         }
+    }
+    /**
+     * Loader class.
+     *
+     * @since 2.13.9
+     */
+    class Loader implements \EDD\EventManagement\SubscriberInterface
+    {
         /**
-         * Get the subscriptions DB.
+         * Register the hooks.
          *
-         * @since 2.13.0
-         * @return \EDD_Subscriptions_DB
+         * @since 2.13.9
+         * @return array
          */
-        private function get_db()
+        public static function get_subscribed_events(): array
+        {
+        }
+        /**
+         * Register the events.
+         *
+         * @since 2.13.9
+         * @param array $events The events to register.
+         * @return array
+         */
+        public function register_events($events): array
+        {
+        }
+        /**
+         * Load any components registered that have cron events.
+         *
+         * @since 2.13.9
+         * @param array $components The components to register.
+         * @return array
+         */
+        public function register_components($components): array
+        {
+        }
+        /**
+         * Get the registered components.
+         *
+         * @since 2.13.9
+         * @return array
+         */
+        private function get_registered_components()
+        {
+        }
+        /**
+         * Clean up old WP Cron events if EDD has migrated to Action Scheduler.
+         *
+         * This handles the case where EDD updates to Action Scheduler first,
+         * leaving Recurring events orphaned in WP Cron.
+         *
+         * @since 2.13.9
+         * @return void
+         */
+        public function maybe_cleanup_old_cron_events()
         {
         }
     }
     /**
      * Recurring Revenue Cron Handler
      *
-     * @since 2.13.2
+     * @since      2.13.2
+     * @deprecated 2.13.9 Use Components\Revenue instead.
      */
     class RecurringRevenue
     {
         /**
-         * The hook name.
-         *
-         * @var string
-         */
-        private static $hook = 'edd_recurring_recalculate_revenue';
-        /**
          * Calculate recurring revenue in the background.
          *
-         * @since 2.13.2
+         * @since      2.13.2
+         * @deprecated 2.13.9 Use Components\Revenue instead.
          */
         public static function calculate_recurring_revenue()
         {
@@ -6755,7 +7130,7 @@ namespace EDD\Recurring\Database\Schemas {
          * @access public
          * @var array
          */
-        public $columns = array(array('name' => 'id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'extra' => 'auto_increment', 'primary' => true, 'sortable' => true), array('name' => 'customer_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => 0, 'cache_key' => true), array('name' => 'period', 'type' => 'varchar', 'length' => 20, 'searchable' => true, 'sortable' => true), array('name' => 'initial_amount', 'type' => 'mediumtext'), array('name' => 'initial_tax_rate', 'type' => 'mediumtext', 'default' => 0), array('name' => 'initial_tax', 'type' => 'mediumtext', 'default' => 0), array('name' => 'recurring_amount', 'type' => 'mediumtext'), array('name' => 'recurring_tax_rate', 'type' => 'mediumtext', 'default' => 0), array('name' => 'recurring_tax', 'type' => 'mediumtext', 'default' => 0), array('name' => 'bill_times', 'type' => 'bigint', 'length' => 20, 'allow_null' => false, 'default' => 0), array('name' => 'transaction_id', 'type' => 'varchar', 'length' => 255, 'allow_null' => false), array('name' => 'parent_payment_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => false), array('name' => 'product_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => false), array('name' => 'price_id', 'type' => 'bigint', 'length' => 20, 'default' => null, 'allow_null' => true), array(
+        public $columns = array(array('name' => 'id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'extra' => 'auto_increment', 'primary' => true, 'sortable' => true), array('name' => 'customer_id', 'type' => 'bigint', 'length' => 20, 'unsigned' => true, 'default' => 0, 'cache_key' => true), array('name' => 'period', 'type' => 'varchar', 'length' => 20, 'searchable' => true, 'sortable' => true), array('name' => 'initial_amount', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'initial_tax_rate', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'initial_tax', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'recurring_amount', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'recurring_tax_rate', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'recurring_tax', 'type' => 'decimal', 'length' => '18,9', 'default' => 0), array('name' => 'bill_times', 'type' => 'bigint', 'length' => 20, 'allow_null' => false, 'default' => 0), array('name' => 'transaction_id', 'type' => 'varchar', 'length' => 255, 'allow_null' => false), array('name' => 'parent_payment_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => false), array('name' => 'product_id', 'type' => 'bigint', 'length' => 20, 'allow_null' => false), array('name' => 'price_id', 'type' => 'bigint', 'length' => 20, 'default' => null, 'allow_null' => true), array(
             'name' => 'created',
             'type' => 'datetime',
             'default' => '',
@@ -6830,7 +7205,7 @@ namespace EDD\Recurring\Database\Tables {
          * @since 2.13.0
          * @var int
          */
-        protected $version = 202507160;
+        protected $version = 202602200;
         /**
          * Array of upgrade versions and methods
          *
@@ -6838,7 +7213,7 @@ namespace EDD\Recurring\Database\Tables {
          *
          * @var array
          */
-        protected $upgrades = array('202504020' => '202504020', '202507160' => '202507160');
+        protected $upgrades = array('202504020' => '202504020', '202507160' => '202507160', '202602200' => '202602200');
         /**
          * Setup the database schema.
          *
@@ -6865,6 +7240,20 @@ namespace EDD\Recurring\Database\Tables {
          * @return bool
          */
         protected function __202507160()
+        {
+        }
+        /**
+         * Upgrade numeric columns from mediumtext to proper decimal types.
+         *
+         * All six numeric columns use decimal(18,9) to match EDD core's convention for both
+         * monetary columns (e.g. edd_orders.total) and rate columns (e.g. edd_tax_rates.amount).
+         * MySQL silently coerces the existing string values to the new type, so no data
+         * migration is required.
+         *
+         * @since 2.13.10
+         * @return bool
+         */
+        protected function __202602200()
         {
         }
     }
@@ -6946,6 +7335,315 @@ namespace EDD\Recurring\Downloads {
          * @return bool
          */
         private function is_price_recurring($price_id)
+        {
+        }
+    }
+    /**
+     * Search class.
+     */
+    class Search implements \EDD\EventManagement\SubscriberInterface
+    {
+        /**
+         * Returns an array of events that this subscriber wants to listen to.
+         *
+         * @since 2.13.10
+         * @return array
+         */
+        public static function get_subscribed_events()
+        {
+        }
+        /**
+         * Search downloads.
+         *
+         * @since 2.13.10
+         */
+        public function search(): void
+        {
+        }
+        /**
+         * Filter the items to only include recurring downloads.
+         *
+         * @since 2.13.10
+         * @param array $items The items to filter.
+         * @return array The filtered items.
+         */
+        public function filter_items($items): array
+        {
+        }
+        /**
+         * Check whether a download has recurring pricing enabled.
+         *
+         * @since 2.13.10
+         * @param \WP_Post $post The download post object.
+         * @return bool
+         */
+        private function is_recurring_download(\WP_Post $post): bool
+        {
+        }
+    }
+}
+namespace EDD\Recurring\Emails\ConditionalTags {
+    /**
+     * Class Category
+     *
+     * @since 2.13.10
+     */
+    class Category extends \EDD\Pro\Emails\ConditionalTags\Conditions\AbstractCondition
+    {
+        use \EDD\Pro\Emails\ConditionalTags\Conditions\Traits\ParseData;
+        /**
+         * Supported operators.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_operators = array('=', '!=');
+        /**
+         * Supported contexts.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_contexts = array('subscription');
+        /**
+         * Get the key for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition key.
+         */
+        public function get_key()
+        {
+        }
+        /**
+         * Get the label for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition label.
+         */
+        public function get_label()
+        {
+        }
+        /**
+         * Evaluate if the subscription product belongs to the specified categories.
+         *
+         * @since 2.13.10
+         *
+         * @param int    $object_id  The subscription ID.
+         * @param object $edd_object The Subscription object.
+         * @param object $email      The EDD email object.
+         * @param mixed  $value      Category ID(s) to check for (comma-separated).
+         * @param string $operator   The comparison operator (= or !=).
+         * @param mixed  $context    The email context.
+         * @return bool
+         */
+        public function evaluate($object_id, $edd_object, $email, $value, $operator = '=', $context = '')
+        {
+        }
+        /**
+         * Get the product ID from the subscription object.
+         *
+         * @since 2.13.10
+         *
+         * @param object $edd_object The Subscription object.
+         * @return int
+         */
+        private function get_subscription_product_id($edd_object)
+        {
+        }
+        /**
+         * Get all download category term IDs for a given product.
+         *
+         * @since 2.13.10
+         *
+         * @param int $product_id The download product ID.
+         * @return int[]
+         */
+        private function get_product_category_ids($product_id)
+        {
+        }
+        /**
+         * Keep only IDs that currently exist in the download_category taxonomy.
+         *
+         * @since 2.13.10
+         *
+         * @param int[] $ids Parsed IDs from the condition value.
+         * @return int[]
+         */
+        private function get_existing_category_ids($ids)
+        {
+        }
+    }
+    /**
+     * Class Download
+     *
+     * @since 2.13.10
+     */
+    class Download extends \EDD\Pro\Emails\ConditionalTags\Conditions\AbstractCondition
+    {
+        use \EDD\Pro\Emails\ConditionalTags\Conditions\Traits\ParseData;
+        /**
+         * Supported operators.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_operators = array('=', '!=');
+        /**
+         * Supported contexts.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_contexts = array('subscription');
+        /**
+         * Get the key for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition key.
+         */
+        public function get_key()
+        {
+        }
+        /**
+         * Get the label for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition label.
+         */
+        public function get_label()
+        {
+        }
+        /**
+         * Return a recurring-only select for the UI.
+         *
+         * Only downloads that have recurring pricing enabled (simple or variable)
+         * are included in the initial option list. The 'search' key causes the
+         * JS layer to use a dedicated AJAX endpoint that applies the same filter
+         * at search time.
+         *
+         * @since 2.13.10
+         *
+         * @return array UI input type descriptor.
+         */
+        public function get_ui_input_type()
+        {
+        }
+        /**
+         * Evaluate if the subscription product matches the given download IDs.
+         *
+         * @since 2.13.10
+         *
+         * @param int    $object_id  The subscription ID.
+         * @param object $edd_object The Subscription object.
+         * @param object $email      The EDD email object.
+         * @param mixed  $value      Download ID(s) to check for (comma-separated).
+         * @param string $operator   The comparison operator (= or !=).
+         * @param mixed  $context    The email context.
+         * @return bool
+         */
+        public function evaluate($object_id, $edd_object, $email, $value, $operator = '=', $context = '')
+        {
+        }
+        /**
+         * Get the product ID from the subscription object.
+         *
+         * @since 2.13.10
+         *
+         * @param object $edd_object The Subscription object.
+         * @return int
+         */
+        private function get_subscription_product_id($edd_object)
+        {
+        }
+        /**
+         * Keep only IDs that currently exist as EDD download products.
+         *
+         * @since 2.13.10
+         *
+         * @param int[] $ids Parsed IDs from the condition value.
+         * @return int[]
+         */
+        private function get_existing_download_ids($ids)
+        {
+        }
+    }
+    /**
+     * Class ExpirationDate
+     *
+     * @since 2.13.10
+     */
+    class ExpirationDate extends \EDD\Pro\Emails\ConditionalTags\Conditions\AbstractCondition
+    {
+        /**
+         * UI input type descriptor for the value field.
+         *
+         * @since 2.13.10
+         * @var array
+         */
+        protected $ui_input_type = array('type' => 'date');
+        /**
+         * Supported operators.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_operators = \EDD\Pro\Emails\ConditionalTags\Utilities\Comparison::OPERATORS;
+        /**
+         * Supported contexts.
+         *
+         * @since 2.13.10
+         * @var string[]
+         */
+        protected $supported_contexts = array('subscription');
+        /**
+         * Get the key for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition key.
+         */
+        public function get_key()
+        {
+        }
+        /**
+         * Get the label for this condition.
+         *
+         * @since 2.13.10
+         *
+         * @return string Condition label.
+         */
+        public function get_label()
+        {
+        }
+        /**
+         * Evaluate the subscription expiration date against the expected value.
+         *
+         * @since 2.13.10
+         *
+         * @param int    $object_id  The subscription ID.
+         * @param object $edd_object The Subscription object.
+         * @param object $email      The EDD email object.
+         * @param mixed  $value      The expected date (YYYY-MM-DD from the date picker).
+         * @param string $operator   The comparison operator (=, !=, >, >=, <, <=).
+         * @param mixed  $context    The email context.
+         * @return bool
+         */
+        public function evaluate($object_id, $edd_object, $email, $value, $operator = '=', $context = '')
+        {
+        }
+        /**
+         * Get the expiration date string from the subscription object.
+         *
+         * @since 2.13.10
+         *
+         * @param object $edd_object The Subscription object.
+         * @return string Expiration date string or empty string.
+         */
+        private function get_expiration_date($edd_object)
         {
         }
     }
@@ -7035,6 +7733,28 @@ namespace EDD\Recurring\Emails {
          * @since 2.12.4
          */
         public function __construct()
+        {
+        }
+        /**
+         * Register subscription-context conditions for conditional email tags.
+         *
+         * @since 2.13.10
+         *
+         * @param \EDD\Pro\Emails\ConditionalTags\ConditionRegistry $registry The condition registry.
+         * @return void
+         */
+        public function register_conditional_tag_conditions($registry)
+        {
+        }
+        /**
+         * Register recurring email tags as comparable for conditional tags.
+         *
+         * @since 2.13.10
+         *
+         * @param array $tags Supported conditional tag map.
+         * @return array
+         */
+        public function register_conditional_tag_types($tags)
         {
         }
         /**
@@ -7346,6 +8066,16 @@ namespace EDD\Recurring\Emails {
          * @return string
          */
         private function get_user_meta_key($subscription, $email_id)
+        {
+        }
+        /**
+         * Whether a subscription email can be sent based on customer data.
+         *
+         * @since 2.13.9
+         * @param Subscription $subscription The subscription object.
+         * @return bool
+         */
+        private function can_send_subscription_email(\EDD\Recurring\Subscriptions\Subscription $subscription)
         {
         }
         /**
@@ -9775,6 +10505,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Initializes the class.
          *
+         * @deprecated 2.13.9
          * @return void
          */
         public function init()
@@ -9783,6 +10514,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Sends an email when a subscription payment is received.
          *
+         * @deprecated 2.13.9
          * @param int               $subscription_id The subscription ID.
          * @param int               $expiration      The expiration date.
          * @param \EDD_Subscription $subscription    The subscription object.
@@ -9795,6 +10527,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Sends an email when a subscription payment fails.
          *
+         * @deprecated 2.13.9
          * @param \EDD_Subscription $subscription The subscription object.
          * @return void
          */
@@ -9804,6 +10537,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Sends an email to the customer when a subscription is cancelled.
          *
+         * @deprecated 2.13.9
          * @param int               $subscription_id The subscription ID.
          * @param \EDD_Subscription $subscription    The subscription object.
          * @return void
@@ -9814,7 +10548,8 @@ namespace EDD\Recurring\Legacy {
         /**
          * Sends an email to the admin when a subscription is cancelled.
          *
-         * @param int              $subscription_id The subscription ID.
+         * @deprecated 2.13.9
+         * @param int               $subscription_id The subscription ID.
          * @param \EDD_Subscription $subscription    The subscription object.
          * @return void
          */
@@ -9824,6 +10559,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Sends a reminder email to a customer.
          *
+         * @deprecated 2.13.9
          * @param int $subscription_id The subscription ID.
          * @param int $notice_id       The notice ID.
          * @return bool
@@ -9834,6 +10570,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Replaces template tags in a reminder email.
          *
+         * @deprecated 2.13.9
          * @param string $text            The text to be parsed (subject or message).
          * @param int    $subscription_id The subscription ID.
          * @return string
@@ -9844,6 +10581,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Replaces template tags in a payment received email.
          *
+         * @deprecated 2.13.9
          * @param string $text   The text to be parsed (subject or message).
          * @param string $amount The payment amount.
          * @return string
@@ -9854,6 +10592,7 @@ namespace EDD\Recurring\Legacy {
         /**
          * Whether a subscription email can be sent based on customer data.
          *
+         * @deprecated 2.13.9
          * @param \EDD_Subscription $subscription
          * @return bool
          */
@@ -9947,6 +10686,7 @@ namespace EDD\Recurring\Legacy {
          * Setup and send test email for a reminder.
          *
          * @since 2.4
+         * @deprecated 2.13.9
          * @return void
          */
         public function send_test_notice($notice_id = 0)
@@ -9958,7 +10698,7 @@ namespace EDD\Recurring\Legacy {
          * @since 2.4
          * @return string
          */
-        function filter_test_notice($text = null)
+        public function filter_test_notice($text = null)
         {
         }
         /**
@@ -10070,6 +10810,7 @@ namespace EDD\Recurring {
          * The cron class
          *
          * @var EDD\Recurring\Cron\Handler
+         * @deprecated 2.13.9 Use the new Cron\Loader class instead.
          */
         public static $cron;
         /**
@@ -10215,13 +10956,12 @@ namespace EDD\Recurring {
         {
         }
         /**
-         * Disable item quantities if the cart contains a subscription
+         * Disable item quantities if the cart contains a subscription.
          *
          * @since  2.5
-         *
+         * @deprecated 2.13.8
          * @param bool $ret Whether or not to enable item quantities.
-         *
-         * @return array
+         * @return bool
          */
         public function maybe_disable_quantities($ret)
         {
@@ -11010,7 +11750,6 @@ namespace EDD\Recurring\Subscribers {
     }
 }
 namespace EDD\Recurring\Subscriptions {
-    // @codeCoverageIgnore
     /**
      * Cancel subscriptions.
      */
@@ -11036,6 +11775,16 @@ namespace EDD\Recurring\Subscriptions {
          * @return void
          */
         public function cancel($subscription_id, $reason = '')
+        {
+        }
+        /**
+         * Add the expired status to the cancellable statuses.
+         *
+         * @since <next-version>
+         * @param array $statuses The statuses.
+         * @return array The statuses.
+         */
+        public function add_expired_status($statuses)
         {
         }
         /**
@@ -11969,6 +12718,19 @@ namespace EDD\Recurring\Subscriptions\Update {
          * @return bool
          */
         private function is_success_page()
+        {
+        }
+        /**
+         * Sends headers to prevent caching and referrer leakage.
+         *
+         * The update token lives in the URL, so Referrer-Policy suppresses it from
+         * being forwarded to third-party servers. Called early in template_redirect
+         * so headers are set on every request to this page, including redirects.
+         *
+         * @since 2.13.11
+         * @return void
+         */
+        private function send_no_cache_headers()
         {
         }
     }
@@ -12989,6 +13751,112 @@ namespace {
     function edd_recurring_anonymize_customer($customer)
     {
     }
+    // @codeCoverageIgnore
+    /**
+     * Adds the Recurring email settings to the Recurring section on the Emails tab.
+     *
+     * @since 2.11.4
+     * @deprecated 2.13.9
+     * @param array $settings The settings array.
+     * @return array
+     */
+    function edd_recurring_email_settings($settings)
+    {
+    }
+    /**
+     * Displays the subscription renewal reminders options
+     *
+     * @since       2.4
+     * @deprecated 2.13.9
+     * @param        array $args Option arguments.
+     * @return      void
+     */
+    function edd_recurring_renewal_reminders_settings($args)
+    {
+    }
+    /**
+     * Displays the subscription expiration reminders options
+     *
+     * @since       2.4
+     * @deprecated 2.13.9
+     * @param        $args array option arguments.
+     * @return      void
+     */
+    function edd_recurring_expiration_reminders_settings($args)
+    {
+    }
+    /**
+     * Add menu page for reminder emails
+     *
+     * @since       2.4
+     * @deprecated 2.13.9
+     * @return      void
+     */
+    function edd_recurring_add_notices_page()
+    {
+    }
+    /**
+     * Removes the Subscription Reminder Notice menu link
+     *
+     * @since       2.4
+     * @return      void
+     */
+    function edd_recurring_hide_reminder_notice_page()
+    {
+    }
+    /**
+     * Renders the add / edit subscription reminder notice screen
+     *
+     * @since 2.4
+     * @deprecated 2.13.9
+     */
+    function edd_recurring_subscription_reminder_notice_edit()
+    {
+    }
+    /**
+     * Processes the creation of a new reminder notice
+     *
+     * @since 2.4
+     * @deprecated 2.13.9
+     * @param array $data The post data.
+     * @return void
+     */
+    function edd_recurring_process_add_reminder_notice($data)
+    {
+    }
+    /**
+     * Processes the update of an existing reminder notice
+     *
+     * @since 2.4
+     * @deprecated 2.13.9
+     * @param array $data The post data.
+     * @return void
+     */
+    function edd_recurring_process_update_reminder_notice($data)
+    {
+    }
+    /**
+     * Processes the deletion of an existing reminder notice
+     *
+     * @since 2.4
+     * @deprecated 2.13.9
+     * @param array $data The post data.
+     * @return void
+     */
+    function edd_recurring_process_delete_reminder_notice($data)
+    {
+    }
+    /**
+     * Sends a test email for a reminder notice
+     *
+     * @since 2.4
+     * @deprecated 2.13.9
+     * @param array $data The post data.
+     * @return void
+     */
+    function edd_recurring_process_send_test_reminder_notice($data)
+    {
+    }
     /*
     |--------------------------------------------------------------------------
     | Variable Prices
@@ -13283,116 +14151,6 @@ namespace {
     {
     }
     /**
-     * Adds the Recurring email settings to the Recurring section on the Emails tab.
-     *
-     * @since 2.11.4
-     * @param array $settings The settings array.
-     * @return array
-     */
-    function edd_recurring_email_settings($settings)
-    {
-    }
-    /**
-     * Displays the subscription renewal reminders options
-     *
-     * @since       2.4
-     *
-     * @param        $args array option arguments
-     *
-     * @return      void
-     */
-    function edd_recurring_renewal_reminders_settings($args)
-    {
-    }
-    /**
-     * Displays the subscription expiration reminders options
-     *
-     * @since       2.4
-     *
-     * @param        $args array option arguments
-     *
-     * @return      void
-     */
-    function edd_recurring_expiration_reminders_settings($args)
-    {
-    }
-    /**
-     * Add menu page for reminder emails
-     * *
-     *
-     * @access      private
-     * @since       2.4
-     * @return      void
-     */
-    function edd_recurring_add_notices_page()
-    {
-    }
-    /**
-     * Removes the Subscription Reminder Notice menu link
-     *
-     * @since       2.4
-     * @return      void
-     */
-    function edd_recurring_hide_reminder_notice_page()
-    {
-    }
-    /**
-     * Renders the add / edit subscription reminder notice screen
-     *
-     * @since 2.4
-     */
-    function edd_recurring_subscription_reminder_notice_edit()
-    {
-    }
-    /**
-     * Processes the creation of a new reminder notice
-     *
-     * @since 2.4
-     *
-     * @param array $data The post data
-     *
-     * @return void
-     */
-    function edd_recurring_process_add_reminder_notice($data)
-    {
-    }
-    /**
-     * Processes the update of an existing reminder notice
-     *
-     * @since 2.4
-     *
-     * @param array $data The post data
-     *
-     * @return void
-     */
-    function edd_recurring_process_update_reminder_notice($data)
-    {
-    }
-    /**
-     * Processes the deletion of an existing reminder notice
-     *
-     * @since 2.4
-     *
-     * @param array $data The post data
-     *
-     * @return void
-     */
-    function edd_recurring_process_delete_reminder_notice($data)
-    {
-    }
-    /**
-     * Sends a test email for a reminder notice
-     *
-     * @since 2.4
-     *
-     * @param array $data The post data
-     *
-     * @return void
-     */
-    function edd_recurring_process_send_test_reminder_notice($data)
-    {
-    }
-    /**
      * Add additional text to Item Quantities setting to explain why it is sometimes disabled
      *
      * @since 2.5.2
@@ -13546,7 +14304,7 @@ namespace {
      * When an order is updated, maybe update the customer ID for the related subscription.
      *
      * @since 2.11.8
-     * @param int $order_id
+     * @param int $order_id The order ID.
      * @return void
      */
     function edd_recurring_update_customer_id_edited_purchase($order_id)
@@ -13556,7 +14314,7 @@ namespace {
      * Find all subscription IDs
      *
      * @since  2.4
-     * @param  array $items Current items to remove from the reset
+     * @param  array $items Current items to remove from the reset.
      * @return array        The items with all subscriptions
      */
     function edd_recurring_reset_delete_subscriptions($items)
@@ -13566,9 +14324,9 @@ namespace {
      * Isolate the subscription items during the reset process
      *
      * @since  2.4
-     * @param  stirng $type The type of item to remove from the initial findings
-     * @param  array  $item The item to remove
-     * @return string       The determine item type
+     * @param  string $type The type of item to remove from the initial findings.
+     * @param  array  $item The item to remove.
+     * @return string       The determined item type.
      */
     function edd_recurring_reset_recurring_type($type, $item)
     {
@@ -13577,8 +14335,8 @@ namespace {
      * Add an SQL item to the reset process for the given subscription IDs
      *
      * @since  2.4
-     * @param  array  $sql An Array of SQL statements to run
-     * @param  string $ids The IDs to remove for the given item type
+     * @param  array  $sql An Array of SQL statements to run.
+     * @param  string $ids The IDs to remove for the given item type.
      * @return array       Returns the array of SQL statements with subscription statement added
      */
     function edd_recurring_reset_queries($sql, $ids)
@@ -14047,6 +14805,16 @@ namespace {
      * @return string The customer update URI.
      */
     function edd_recurring_get_customer_update_uri($subscription): string
+    {
+    }
+    /**
+     * Disable quantities for recurring products.
+     *
+     * @param bool $disabled Whether quantities are disabled.
+     * @param int  $download_id The download ID.
+     * @return bool
+     */
+    function edd_recurring_download_quantities_disabled($disabled, $download_id)
     {
     }
     // @codeCoverageIgnore

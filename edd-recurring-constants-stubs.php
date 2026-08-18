@@ -10,5 +10,5 @@
 \define('EDD_RECURRING_PLUGIN_DIR', \plugin_dir_path(__FILE__));
 \define('EDD_RECURRING_PLUGIN_URL', \plugin_dir_url(__FILE__));
 \define('EDD_RECURRING_PLUGIN_FILE', __FILE__);
-\define('EDD_RECURRING_VERSION', '2.13.7');
+\define('EDD_RECURRING_VERSION', '2.13.11');
 \define('EDD_RECURRING_MINIMUM_PHP', '7.4');

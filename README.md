@@ -8,8 +8,8 @@
 PHP stub declarations for **Easy Digital Downloads Pro** (3.6.7) including:
 
 - [EDD Pro](https://easydigitaldownloads.com) — core EDD Pro classes and functions
-- [EDD Software Licensing](https://easydigitaldownloads.com/downloads/software-licensing/) (3.9.2) — license key management
-- [EDD Recurring Payments](https://easydigitaldownloads.com/downloads/recurring-payments/) (2.13.7) — subscription billing
+- [EDD Software Licensing](https://easydigitaldownloads.com/downloads/software-licensing/) (3.9.6) — license key management
+- [EDD Recurring Payments](https://easydigitaldownloads.com/downloads/recurring-payments/) (2.13.11) — subscription billing
 
 Generated using [php-stubs/generator](https://github.com/php-stubs/generator) from the actual plugin source.
 
